@@ -1,4 +1,4 @@
-# Sun2000 modbus TCP interface
+# Sun2000 ModBus TCP Data Scraper
 
 This is a simple interface pull data and stats over ModBus TCP, from a Sun2000-xxx inverter.
 
@@ -8,7 +8,7 @@ environment.
 
 ## License and Copying
 
-**Author:** Dragos Vingarzan vingarzan -at- gmail dot com
+**Author(s):** Dragos Vingarzan vingarzan -at- gmail dot com
 
 **Copyright:** 2024 Dragos Vingarzan vingarzan -at- gmail -dot- com
 
@@ -93,8 +93,8 @@ be nicer on the inverter, but your data will be more stale.
 
 ## Future work
 
-Add testing...
-
-At some point this could be extracted as a library and cleaned-up.
-
-Providing containers or other packaging would be nice too.
+- Add testing...
+- At some point this could be extracted as a library and cleaned-up.
+- Providing containers or other packaging would be nice too
+- Have a configuration template for each data attribute being read. Would make extensions easier to handle, instead
+of all the (mostly GitHub Copilot :-p generated) code for parsing and formatting the data.

@@ -294,7 +294,7 @@ func (x *productData) metricsString(id *identificationData) string {
 	sb.WriteString(fmt.Sprintf("# Number Of Packages To Be Upgraded   = %d\n", x.numberOfPackagesToBeUpgraded))
 	sb.WriteString("\n")
 	for i, v := range x.subpackageInformation {
-		sb.WriteString(fmt.Sprintf("# Subpackage %d Information  = %#08x\tfileTypeID=%3d\tdeviceTypeId=%d\n", i+1, v, v>>16&0xff, v&0xffff))
+		sb.WriteString(fmt.Sprintf("# Subpackage %2d Information  = %#08x\tfileTypeID=%3d\tdeviceTypeId=%d\n", i+1, v, v>>16&0xff, v&0xffff))
 	}
 	sb.WriteString("\n")
 
@@ -966,13 +966,18 @@ func (x *pvData) metricsString(id *identificationData) string {
 	sb.WriteString("\n")
 	sb.WriteString(fmt.Sprintf("# Device SN Signature Code = %#04x\t%#016b\n", x.deviceSNSignatureCode, x.deviceSNSignatureCode))
 	sb.WriteString("\n")
+	powerTotal := float32(0)
 	for i, v := range x.pv {
 		if v.voltage != 0 || v.current != 0 || i < int(id.numberOfStrings) {
-			sb.WriteString(fmt.Sprintf("# PV%2d Voltage = %5.1f V\n", i+1, v.voltage))
-			sb.WriteString(fmt.Sprintf("# PV%2d Current = %5.2f A\n", i+1, v.current))
-			sb.WriteString(fmt.Sprintf("# PV%2d Power   = %5.2f VA\n", i+1, v.voltage*v.current))
+			sb.WriteString(fmt.Sprintf("# PV%2d Voltage   = %7.3f V\n", i+1, v.voltage))
+			sb.WriteString(fmt.Sprintf("# PV%2d Current   = %7.3f A\n", i+1, v.current))
+			power := v.voltage * v.current
+			powerTotal += power
+			sb.WriteString(fmt.Sprintf("# PV%2d Power     = %7.3f kW\n", i+1, power/1000))
 		}
 	}
+	sb.WriteString("# --------------------------\n")
+	sb.WriteString(fmt.Sprintf("# PV Total Power = %7.3f kW\n", powerTotal/1000))
 	sb.WriteString("\n")
 
 	// skip metrics if the data is empty
@@ -987,9 +992,11 @@ func (x *pvData) metricsString(id *identificationData) string {
 			if v.voltage != 0 || v.current != 0 || i < int(id.numberOfStrings) {
 				sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_voltage{model=%q,sn=%q,pv=%d,unit=\"V\"} %.1f\n", id.model, id.sn, i+1, v.voltage))
 				sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_current{model=%q,sn=%q,pv=%d,unit=\"A\"} %.2f\n", id.model, id.sn, i+1, v.current))
-				sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_power{model=%q,sn=%q,pv=%d,unit=\"VA\"} %.2f\n", id.model, id.sn, i+1, v.voltage*v.current))
+				power := v.voltage * v.current
+				sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_power{model=%q,sn=%q,pv=%d,unit=\"kW\"} %.3f\n", id.model, id.sn, i+1, power/1000))
 			}
 		}
+		sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_total_power{model=%q,sn=%q,unit=\"kW\"} %.3f\n", id.model, id.sn, powerTotal/1000))
 	}
 	sb.WriteString("\n")
 
@@ -1220,13 +1227,13 @@ func (x *gridData) metricsString(id *identificationData) string {
 		sb.WriteString(fmt.Sprintf("sun2000_inverter_reactive_power{model=%q,sn=%q,unit=\"kVar\"} %3.3f\n", id.model, id.sn, x.reactivePower))
 		sb.WriteString(fmt.Sprintf("sun2000_inverter_power_factor{model=%q,sn=%q} %3.3f\n", id.model, id.sn, x.powerFactor))
 		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_frequency{model=%q,sn=%q,unit=\"Hz\"} %2.2f\n", id.model, id.sn, x.powergridFrequency))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_inverter_efficiency{model=%q,sn=%q,unit=\"%\"} %3.2f\n", id.model, id.sn, x.inverterEfficiency))
+		sb.WriteString(fmt.Sprintf("sun2000_inverter_inverter_efficiency{model=%q,sn=%q,unit=\"%%\"} %3.2f\n", id.model, id.sn, x.inverterEfficiency))
 
 		sb.WriteString(fmt.Sprintf("sun2000_inverter_internal_temperature{model=%q,sn=%q,unit=\"℃\"} %3.1f\n", id.model, id.sn, x.internalTemperature))
 
 		sb.WriteString(fmt.Sprintf("sun2000_inverter_insulation_impedance_value{model=%q,sn=%q,unit=\"MΩ\"} %4.3f\n", id.model, id.sn, x.insulationImpedanceValue))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_device_status{model=%q,sn=%q} %#04x\n", id.model, id.sn, x.deviceStatus))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_fault_code{model=%q,sn=%q} %#04x\n", id.model, id.sn, x.faultCode))
+		sb.WriteString(fmt.Sprintf("sun2000_inverter_device_status{model=%q,sn=%q} %d\n", id.model, id.sn, x.deviceStatus))
+		sb.WriteString(fmt.Sprintf("sun2000_inverter_fault_code{model=%q,sn=%q} %d\n", id.model, id.sn, x.faultCode))
 
 		sb.WriteString(fmt.Sprintf("sun2000_inverter_startup_time{model=%q,sn=%q} %d\n", id.model, id.sn, x.startupTime.Unix()))
 		sb.WriteString(fmt.Sprintf("sun2000_inverter_shutdown_time{model=%q,sn=%q} %d\n", id.model, id.sn, x.shutdownTime.Unix()))
