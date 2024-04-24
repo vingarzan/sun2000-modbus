@@ -221,15 +221,15 @@ func (x *identificationData) metricsString(id *identificationData) string {
 	if x.lastRead.IsZero() {
 		sb.WriteString("# No identification data read yet\n")
 	} else {
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_number_of_MPPTs{model=%q,sn=%q} %d\n", x.model, x.sn, x.numberOfMPPTs))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_number_of_strings{model=%q,sn=%q} %d\n", x.model, x.sn, x.numberOfStrings))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_rated_power{model=%q,sn=%q,unit=\"kW\",description=\"Rated Power\"} %.3f\n", x.model, x.sn, x.ratedPower))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_Pmax{model=%q,sn=%q,unit=\"kW\",description=\"Maximum Active Power Pmax\"} %.3f\n", x.model, x.sn, x.maxActivePowerPmax))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_Smax{model=%q,sn=%q,unit=\"kVA\",description=\"Maximum Apparent Power Smax\"} %.3f\n", x.model, x.sn, x.maxApparentPowerSmax))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_Qmax_feed_to_grid{model=%q,sn=%q,unit=\"kVar\",description=\"Realtime Max Reactive Power Qmax Feed to Grid\"} %.3f\n", x.model, x.sn, x.realtimeMaxReactivePowerQmaxFeedToGrid))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_Qmax_absorbed_from_grid{model=%q,sn=%q,unit=\"kVar\",description=\"Realtime Max Reactive Power Qmax Absorbed from Grid\"} %.3f\n", x.model, x.sn, x.realtimeMaxReactivePowerQmaxAbsorbedFromGrid))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_Pmax_real{model=%q,sn=%q,unit=\"kW\",description=\"Maximum Active Capability Pmax Real\"} %.3f\n", x.model, x.sn, x.maxActiveCapabilityPmaxReal))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_Smax_real{model=%q,sn=%q,unit=\"kVA\",description=\"Maximum Apparent Capability Smax Real\"} %.3f\n", x.model, x.sn, x.maxApparentCapabilitySmaxReal))
+		sb.WriteString(fmt.Sprintf("sun2000_number_of_MPPTs{model=%q,sn=%q} %d\n", x.model, x.sn, x.numberOfMPPTs))
+		sb.WriteString(fmt.Sprintf("sun2000_number_of_strings{model=%q,sn=%q} %d\n", x.model, x.sn, x.numberOfStrings))
+		sb.WriteString(fmt.Sprintf("sun2000_rated_power{model=%q,sn=%q,unit=\"kW\",description=\"Rated Power\"} %.3f\n", x.model, x.sn, x.ratedPower))
+		sb.WriteString(fmt.Sprintf("sun2000_Pmax{model=%q,sn=%q,unit=\"kW\",description=\"Maximum Active Power Pmax\"} %.3f\n", x.model, x.sn, x.maxActivePowerPmax))
+		sb.WriteString(fmt.Sprintf("sun2000_Smax{model=%q,sn=%q,unit=\"kVA\",description=\"Maximum Apparent Power Smax\"} %.3f\n", x.model, x.sn, x.maxApparentPowerSmax))
+		sb.WriteString(fmt.Sprintf("sun2000_Qmax_feed_to_grid{model=%q,sn=%q,unit=\"kVar\",description=\"Realtime Max Reactive Power Qmax Feed to Grid\"} %.3f\n", x.model, x.sn, x.realtimeMaxReactivePowerQmaxFeedToGrid))
+		sb.WriteString(fmt.Sprintf("sun2000_Qmax_absorbed_from_grid{model=%q,sn=%q,unit=\"kVar\",description=\"Realtime Max Reactive Power Qmax Absorbed from Grid\"} %.3f\n", x.model, x.sn, x.realtimeMaxReactivePowerQmaxAbsorbedFromGrid))
+		sb.WriteString(fmt.Sprintf("sun2000_Pmax_real{model=%q,sn=%q,unit=\"kW\",description=\"Maximum Active Capability Pmax Real\"} %.3f\n", x.model, x.sn, x.maxActiveCapabilityPmaxReal))
+		sb.WriteString(fmt.Sprintf("sun2000_Smax_real{model=%q,sn=%q,unit=\"kVA\",description=\"Maximum Apparent Capability Smax Real\"} %.3f\n", x.model, x.sn, x.maxApparentCapabilitySmaxReal))
 
 	}
 	sb.WriteString("\n")
@@ -304,8 +304,8 @@ func (x *productData) metricsString(id *identificationData) string {
 	} else {
 		id.RLock()
 		defer id.RUnlock()
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_unique_id_of_the_software{model=%q,sn=%q} %d\n", id.model, id.sn, x.uniqueIDOfTheSoftware))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_number_of_packages_to_be_upgraded{model=%q,sn=%q} %d\n", id.model, id.sn, x.numberOfPackagesToBeUpgraded))
+		sb.WriteString(fmt.Sprintf("sun2000_unique_id_of_the_software{model=%q,sn=%q} %d\n", id.model, id.sn, x.uniqueIDOfTheSoftware))
+		sb.WriteString(fmt.Sprintf("sun2000_number_of_packages_to_be_upgraded{model=%q,sn=%q} %d\n", id.model, id.sn, x.numberOfPackagesToBeUpgraded))
 	}
 	sb.WriteString("\n")
 
@@ -794,7 +794,7 @@ func (x *alarmData) metricsString(id *identificationData) string {
 		defer id.RUnlock()
 
 		for i, a := range x.alarm {
-			sb.WriteString(fmt.Sprintf("sun2000_inverter_alarm{model=%q,sn=%q,name=\"Alarm%d\"} %d\n", id.model, id.sn, i+1, a))
+			sb.WriteString(fmt.Sprintf("sun2000_alarm{model=%q,sn=%q,name=\"Alarm%d\"} %d\n", id.model, id.sn, i+1, a))
 		}
 
 		// might be a bit much, but nice for some historical visibility
@@ -803,7 +803,7 @@ func (x *alarmData) metricsString(id *identificationData) string {
 			if a.isTriggered(x.alarm) {
 				value = "1"
 			}
-			sb.WriteString(fmt.Sprintf("sun2000_inverter_alarm_triggered{model=%q,sn=%q,name=%q,id=%d,level=%q} %s\n", id.model, id.sn, a.name, a.id, a.level, value))
+			sb.WriteString(fmt.Sprintf("sun2000_alarm_triggered{model=%q,sn=%q,name=%q,id=\"%d\",level=%q} %s\n", id.model, id.sn, a.name, a.id, a.level, value))
 		}
 
 	}
@@ -990,13 +990,13 @@ func (x *pvData) metricsString(id *identificationData) string {
 
 		for i, v := range x.pv {
 			if v.voltage != 0 || v.current != 0 || i < int(id.numberOfStrings) {
-				sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_voltage{model=%q,sn=%q,pv=%d,unit=\"V\"} %.1f\n", id.model, id.sn, i+1, v.voltage))
-				sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_current{model=%q,sn=%q,pv=%d,unit=\"A\"} %.2f\n", id.model, id.sn, i+1, v.current))
+				sb.WriteString(fmt.Sprintf("sun2000_pv_voltage{model=%q,sn=%q,pv=\"%d\",unit=\"V\"} %.1f\n", id.model, id.sn, i+1, v.voltage))
+				sb.WriteString(fmt.Sprintf("sun2000_pv_current{model=%q,sn=%q,pv=\"%d\",unit=\"A\"} %.2f\n", id.model, id.sn, i+1, v.current))
 				power := v.voltage * v.current
-				sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_power{model=%q,sn=%q,pv=%d,unit=\"kW\"} %.3f\n", id.model, id.sn, i+1, power/1000))
+				sb.WriteString(fmt.Sprintf("sun2000_pv_power{model=%q,sn=%q,pv=\"%d\",unit=\"kW\"} %.3f\n", id.model, id.sn, i+1, power/1000))
 			}
 		}
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_pv_total_power{model=%q,sn=%q,unit=\"kW\"} %.3f\n", id.model, id.sn, powerTotal/1000))
+		sb.WriteString(fmt.Sprintf("sun2000_pv_total_power{model=%q,sn=%q,unit=\"kW\"} %.3f\n", id.model, id.sn, powerTotal/1000))
 	}
 	sb.WriteString("\n")
 
@@ -1202,41 +1202,41 @@ func (x *gridData) metricsString(id *identificationData) string {
 		id.RLock()
 		defer id.RUnlock()
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_dc_power{model=%q,sn=%q,unit=\"kW\"} %3.3f\n", id.model, id.sn, x.dcPower))
+		sb.WriteString(fmt.Sprintf("sun2000_dc_power{model=%q,sn=%q,unit=\"kW\"} %3.3f\n", id.model, id.sn, x.dcPower))
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_ab_line_voltage{model=%q,sn=%q,unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridABLineVoltage))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_bc_line_voltage{model=%q,sn=%q,unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridBCLineVoltage))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_ca_line_voltage{model=%q,sn=%q,unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridCALineVoltage))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_line_voltage{model=%q,sn=%q,line=\"AB\",unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridABLineVoltage))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_line_voltage{model=%q,sn=%q,line=\"BC\",unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridBCLineVoltage))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_line_voltage{model=%q,sn=%q,line=\"CA\",unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridCALineVoltage))
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_a_voltage{model=%q,sn=%q,unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridPhaseAVoltage))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_b_voltage{model=%q,sn=%q,unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridPhaseBVoltage))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_c_voltage{model=%q,sn=%q,unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridPhaseCVoltage))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_voltage{model=%q,sn=%q,phase=\"A\",unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridPhaseAVoltage))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_voltage{model=%q,sn=%q,phase=\"B\",unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridPhaseBVoltage))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_voltage{model=%q,sn=%q,phase=\"C\",unit=\"V\"} %3.1f\n", id.model, id.sn, x.powergridPhaseCVoltage))
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_a_current{model=%q,sn=%q,unit=\"A\"} %3.3f\n", id.model, id.sn, x.powergridPhaseACurrent))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_b_current{model=%q,sn=%q,unit=\"A\"} %3.3f\n", id.model, id.sn, x.powergridPhaseBCurrent))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_c_current{model=%q,sn=%q,unit=\"A\"} %3.3f\n", id.model, id.sn, x.powergridPhaseCCurrent))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_current{model=%q,sn=%q,phase=\"A\",unit=\"A\"} %3.3f\n", id.model, id.sn, x.powergridPhaseACurrent))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_current{model=%q,sn=%q,phase=\"B\",unit=\"A\"} %3.3f\n", id.model, id.sn, x.powergridPhaseBCurrent))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_current{model=%q,sn=%q,phase=\"C\",unit=\"A\"} %3.3f\n", id.model, id.sn, x.powergridPhaseCCurrent))
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_a_power{model=%q,sn=%q,unit=\"VA\"} %3.3f\n", id.model, id.sn, pA))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_b_power{model=%q,sn=%q,unit=\"VA\"} %3.3f\n", id.model, id.sn, pB))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_phase_c_power{model=%q,sn=%q,unit=\"VA\"} %3.3f\n", id.model, id.sn, pC))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_total_power{model=%q,sn=%q,unit=\"VA\"} %3.3f\n", id.model, id.sn, pA+pB+pC))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_power{model=%q,sn=%q,phase=\"A\",unit=\"VA\"} %3.3f\n", id.model, id.sn, pA))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_power{model=%q,sn=%q,phase=\"B\",unit=\"VA\"} %3.3f\n", id.model, id.sn, pB))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_phase_power{model=%q,sn=%q,phase=\"C\",unit=\"VA\"} %3.3f\n", id.model, id.sn, pC))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_total_power{model=%q,sn=%q,unit=\"VA\"} %3.3f\n", id.model, id.sn, pA+pB+pC))
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_peak_active_power_of_the_day{model=%q,sn=%q,unit=\"kW\"} %3.3f\n", id.model, id.sn, x.peakActivePowerOfTheDay))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_active_power_fast{model=%q,sn=%q,unit=\"kW\"} %3.3f\n", id.model, id.sn, x.activePowerFast))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_active_power{model=%q,sn=%q,unit=\"kW\"} %3.3f\n", id.model, id.sn, x.activePower))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_reactive_power{model=%q,sn=%q,unit=\"kVar\"} %3.3f\n", id.model, id.sn, x.reactivePower))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_power_factor{model=%q,sn=%q} %3.3f\n", id.model, id.sn, x.powerFactor))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_powergrid_frequency{model=%q,sn=%q,unit=\"Hz\"} %2.2f\n", id.model, id.sn, x.powergridFrequency))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_inverter_efficiency{model=%q,sn=%q,unit=\"%%\"} %3.2f\n", id.model, id.sn, x.inverterEfficiency))
+		sb.WriteString(fmt.Sprintf("sun2000_peak_active_power_of_the_day{model=%q,sn=%q,unit=\"kW\"} %3.3f\n", id.model, id.sn, x.peakActivePowerOfTheDay))
+		sb.WriteString(fmt.Sprintf("sun2000_active_power_fast{model=%q,sn=%q,unit=\"kW\"} %3.3f\n", id.model, id.sn, x.activePowerFast))
+		sb.WriteString(fmt.Sprintf("sun2000_active_power{model=%q,sn=%q,unit=\"kW\"} %3.3f\n", id.model, id.sn, x.activePower))
+		sb.WriteString(fmt.Sprintf("sun2000_reactive_power{model=%q,sn=%q,unit=\"kVar\"} %3.3f\n", id.model, id.sn, x.reactivePower))
+		sb.WriteString(fmt.Sprintf("sun2000_power_factor{model=%q,sn=%q} %3.3f\n", id.model, id.sn, x.powerFactor))
+		sb.WriteString(fmt.Sprintf("sun2000_powergrid_frequency{model=%q,sn=%q,unit=\"Hz\"} %2.2f\n", id.model, id.sn, x.powergridFrequency))
+		sb.WriteString(fmt.Sprintf("sun2000_inverter_efficiency{model=%q,sn=%q,unit=\"%%\"} %3.2f\n", id.model, id.sn, x.inverterEfficiency))
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_internal_temperature{model=%q,sn=%q,unit=\"℃\"} %3.1f\n", id.model, id.sn, x.internalTemperature))
+		sb.WriteString(fmt.Sprintf("sun2000_internal_temperature{model=%q,sn=%q,unit=\"℃\"} %3.1f\n", id.model, id.sn, x.internalTemperature))
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_insulation_impedance_value{model=%q,sn=%q,unit=\"MΩ\"} %4.3f\n", id.model, id.sn, x.insulationImpedanceValue))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_device_status{model=%q,sn=%q} %d\n", id.model, id.sn, x.deviceStatus))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_fault_code{model=%q,sn=%q} %d\n", id.model, id.sn, x.faultCode))
+		sb.WriteString(fmt.Sprintf("sun2000_insulation_impedance_value{model=%q,sn=%q,unit=\"MΩ\"} %4.3f\n", id.model, id.sn, x.insulationImpedanceValue))
+		sb.WriteString(fmt.Sprintf("sun2000_device_status{model=%q,sn=%q,state=%q} %d\n", id.model, id.sn, x.deviceStatus, x.deviceStatus))
+		sb.WriteString(fmt.Sprintf("sun2000_fault_code{model=%q,sn=%q} %d\n", id.model, id.sn, x.faultCode))
 
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_startup_time{model=%q,sn=%q} %d\n", id.model, id.sn, x.startupTime.Unix()))
-		sb.WriteString(fmt.Sprintf("sun2000_inverter_shutdown_time{model=%q,sn=%q} %d\n", id.model, id.sn, x.shutdownTime.Unix()))
+		sb.WriteString(fmt.Sprintf("sun2000_startup_time{model=%q,sn=%q} %d\n", id.model, id.sn, x.startupTime.Unix()))
+		sb.WriteString(fmt.Sprintf("sun2000_shutdown_time{model=%q,sn=%q} %d\n", id.model, id.sn, x.shutdownTime.Unix()))
 
 	}
 	sb.WriteString("\n")
