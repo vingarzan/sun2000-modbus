@@ -103,10 +103,10 @@ var modbusAddrRanges = []modbusInterval{
 		pullInterval: 1 * time.Hour,
 	},
 	{
-		name:         "Alarm Data",
+		name:         "Alarm Data 1",
 		from:         32008,
 		to:           32011,
-		target:       &parsedData.alarm,
+		target:       &parsedData.alarm1,
 		pullInterval: 2 * time.Minute,
 	},
 	{
@@ -120,8 +120,140 @@ var modbusAddrRanges = []modbusInterval{
 		name:         "Grid Data",
 		from:         32064,
 		to:           32097,
-		target:       &parsedData.grid,
+		target:       &parsedData.inverter,
 		pullInterval: 10 * time.Second,
+	},
+	{
+		name:         "Cumulative Data 1",
+		from:         32106,
+		to:           32120,
+		target:       &parsedData.cumulative1,
+		pullInterval: 2 * time.Minute,
+	},
+	{
+		name:         "Cumulative Data 2",
+		from:         32151,
+		to:           32192,
+		target:       &parsedData.cumulative2,
+		pullInterval: 2 * time.Minute,
+	},
+	{
+		name:         "Cumulative Data 3",
+		from:         32190,
+		to:           32192,
+		target:       &parsedData.cumulative3,
+		pullInterval: 2 * time.Minute,
+	},
+	{
+		name:         "MPPT Data 1",
+		from:         32212,
+		to:           32232,
+		target:       &parsedData.mppt1,
+		pullInterval: 2 * time.Minute,
+	},
+	{
+		name:         "Alarm Data 2",
+		from:         32252,
+		to:           32278,
+		target:       &parsedData.alarm2,
+		pullInterval: 2 * time.Minute,
+	},
+	// Does not work
+	// {
+	// 	name:         "String Access Data",
+	// 	from:         32300,
+	// 	to:           32318,
+	// 	target:       &parsedData.stringAccess,
+	// 	pullInterval: 1 * time.Hour,
+	// },
+	{
+		name:         "MPPT Data 2",
+		from:         32324,
+		to:           32344,
+		target:       &parsedData.mppt2,
+		pullInterval: 2 * time.Minute,
+	},
+	{
+		name:         "Internal Temperature Data",
+		from:         35021,
+		to:           35033,
+		target:       &parsedData.internalTemperature,
+		pullInterval: 2 * time.Minute,
+	},
+	{
+		name:         "Meter Data",
+		from:         37100,
+		to:           37139,
+		target:       &parsedData.meter,
+		pullInterval: 10 * time.Second,
+	},
+	{
+		name:         "ESU1 Data",
+		from:         37000,
+		to:           37070,
+		target:       &parsedData.esu1,
+		pullInterval: 30 * time.Second,
+	},
+	{
+		name:         "ESU2 Data",
+		from:         37700,
+		to:           37757,
+		target:       &parsedData.esu2,
+		pullInterval: 30 * time.Second,
+	},
+	{
+		name:         "ESU1-Pack1 Data",
+		from:         38200,
+		to:           38242,
+		target:       &parsedData.esu1.pack[0],
+		pullInterval: 30 * time.Second,
+	},
+	{
+		name:         "ESU1-Pack2 Data",
+		from:         38242,
+		to:           38284,
+		target:       &parsedData.esu1.pack[1],
+		pullInterval: 30 * time.Second,
+	},
+	// // I don't have this one
+	// {
+	// 	name:         "ESU1-Pack3 Data",
+	// 	from:         38284,
+	// 	to:           38326,
+	// 	target:       &parsedData.esu1.pack[2],
+	// 	pullInterval: 30 * time.Second,
+	// },
+	// // I don't have this one
+	// {
+	// 	name:         "ESU2-Pack1 Data",
+	// 	from:         38326,
+	// 	to:           38368,
+	// 	target:       &parsedData.esu2.pack[0],
+	// 	pullInterval: 30 * time.Second,
+	// },
+	// // I don't have this one
+	// {
+	// 	name:         "ESU2-Pack2 Data",
+	// 	from:         38368,
+	// 	to:           38410,
+	// 	target:       &parsedData.esu2.pack[1],
+	// 	pullInterval: 30 * time.Second,
+	// },
+	// // I don't have this one
+	// {
+	// 	name:         "ESU2-Pack3 Data",
+	// 	from:         38410,
+	// 	to:           38452,
+	// 	target:       &parsedData.esu2.pack[2],
+	// 	pullInterval: 30 * time.Second,
+	// },
+
+	{
+		name:         "ESU Temperatures",
+		from:         38452,
+		to:           38452 + 2*3*2,
+		target:       &parsedData.esuTemperatures,
+		pullInterval: 30 * time.Second,
 	},
 }
 
@@ -147,7 +279,7 @@ func readModbusLoop(pollInterval uint) {
 				}
 				addrRange.target.setLastRead(time.Now())
 				addrRange.target.setNextRead(time.Now().Add(addrRange.pullInterval))
-				lInfo.Printf("Will read again the %s at %s", addrRange.name, addrRange.target.getNextRead().Format(time.RFC3339))
+				lInfo.Printf("Will read again the %s after %s", addrRange.name, addrRange.target.getNextRead().Format(time.RFC3339))
 			}
 		}
 

@@ -42,7 +42,7 @@ func initModbus(ip string, port uint16, timeout uint) (handler *modbus.TCPClient
 }
 
 func readModbusFromTo(what string, from uint16, to uint16) (results []byte, err error) {
-	lDebug.Printf("Reading %s from modbus %d..%d\n", what, from, to)
+	lDebug.Printf("   >>   Reading %s from modbus %d..%d\n", what, from, to)
 
 	size := (to - from)
 	return clientModbus.ReadHoldingRegisters(from, size)
@@ -75,6 +75,6 @@ func handleReadModbusResults(results []byte, err error) (ok bool) {
 		totalSuccessCount++
 		lastSuccessTime = time.Now()
 	}
-	lDebug.Printf("Results: %q\n", results)
+	// lDebug.Printf("Results: %q\n", results)
 	return true
 }
