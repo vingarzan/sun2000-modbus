@@ -54,8 +54,16 @@ func handleReadModbusResults(results []byte, err error) (ok bool) {
 		errorCount++
 		totalErrorCount++
 		if errorCount > 10 {
-			lWarning.Printf("Too many errors, sleeping for 5 minute\n")
-			time.Sleep(5 * time.Minute)
+			handlerModbus.Close()
+			handlerModbus = nil
+
+			lWarning.Printf("Too many errors, sleeping for 3 minute\n")
+			time.Sleep(3 * time.Minute)
+			handlerModbus, clientModbus, err = initModbus(cfg.modbusIP, cfg.modbusPort, uint(cfg.modbusTimeout))
+			if err != nil {
+				log.Fatal(err)
+			}
+			return false
 		}
 		if strings.Contains(err.Error(), "modbus: response transaction id") {
 			lWarning.Printf("modbus: sun2000 has a known bug where it fucks up transaction ids... we must close the connection, then reopen.")
