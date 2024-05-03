@@ -216,14 +216,13 @@ var modbusAddrRanges = []modbusInterval{
 		target:       &parsedData.esu1.pack[1],
 		pullInterval: 30 * time.Second,
 	},
-	// // I don't have this one
-	// {
-	// 	name:         "ESU1-Pack3 Data",
-	// 	from:         38284,
-	// 	to:           38326,
-	// 	target:       &parsedData.esu1.pack[2],
-	// 	pullInterval: 30 * time.Second,
-	// },
+	{
+		name:         "ESU1-Pack3 Data",
+		from:         38284,
+		to:           38326,
+		target:       &parsedData.esu1.pack[2],
+		pullInterval: 30 * time.Second,
+	},
 	// // I don't have this one
 	// {
 	// 	name:         "ESU2-Pack1 Data",
