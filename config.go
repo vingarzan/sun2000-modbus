@@ -31,7 +31,7 @@ type config struct {
 }
 
 func (c *config) setDefaults() {
-	c.httpIP = "127.0.0.1"
+	c.httpIP = "0.0.0.0"
 	c.httpPort = "8080"
 	c.modbusIP = ""
 	c.modbusPort = 502
