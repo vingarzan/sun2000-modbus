@@ -10,7 +10,7 @@ environment.
 
 **Author(s):** Dragos Vingarzan vingarzan -at- gmail dot com
 
-**Copyright:** 2024 Dragos Vingarzan vingarzan -at- gmail -dot- com
+**Copyright:** 2024-2026 Dragos Vingarzan vingarzan -at- gmail -dot- com
 
 **License:** [AGPL-3.0](./LICENSE)
 
@@ -25,8 +25,8 @@ Public License Version 3 (AGPL-3.0) as published by the Free Software Foundation
 
 You should have received a copy of the AGPL-3.0 along with sun2000-modbus. If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).
 
-Sun2000 is (probably) a (registered) trademark of sun2000. Any such names are used in here for pure informative purposes
-and this package is not endorsed in any way by sun2000.
+Sun2000 is (probably) a (registered) trademark of Huawei. Any such names are used in here for pure informative purposes
+and this package is not endorsed in any way by Huawei.
 
 --------
 
@@ -36,7 +36,7 @@ For the modbus communication this uses [GoBorrow's implementation - github.com/g
 
 ## Warning
 
-***!!! Use this code at your own risk. I take no warranties if you break your inverter, set your batteris on fire or kill your cat. !!!***
+***!!! Use this code at your own risk. I take no warranties if you break your inverter, set your batteries on fire or kill your cat !!!***
 
 ## References
 
@@ -53,7 +53,7 @@ If anyone has newer/better references, I'd appreciate it.
 
 ## Usage
 
-Install go and then run `go run .`, or compile and install it, etc. Eventually, I'll also make a Dockerfile.
+Install go and then run `go run .`, or compile and install it, etc. Now we also have a Dockerfile and a docker-compose.yaml might be added on demand.
 
 Your inverter needs to have modbus enabled. Since that **would allow you to also write not just read data**, think
 carefully before you open it up for a potential attack! Make sure that you secure this interface from any malicious
@@ -64,7 +64,7 @@ would be open on the dongle, which is typically used to connect your inverter to
 opening this even on your home LAN!!!*** Instead, maybe put the whole thing behind a Rasperry Pi, in a sort of guest
 network environment, isolating it from devices which might be easily compromised.
 
-Find the IP of your inverter and export it, then run this program:
+Find the IP of your inverter and export it, then run this:
 
     export MODBUS_IP="192.168.0.250"
     go run .
@@ -82,13 +82,14 @@ Set the following environment variables to your own desire:
 | `MODBUS_PORT`     | 502       | Port of ModBus on the inverter |
 | `MODBUS_TIMEOUT`  | 5         | If the inverter does not answer, give up after this many seconds |
 | `MODBUS_SLEEP`    | 5         | Interval in seconds to sleep after doing a full round of reads |
+| `MODBUS_SLAVE_ID` | 1         | The Modbus Slave Id |
 
 Data is read in address ranges, trying to minimize the number of commands, since each seems to be kind of slow. For each
-suck block of data an expiration is set. Some data which very rarely changes is polled at longer intervals (e.g. model,
+suck block of data, an expiration is set. Some data which very rarely changes is polled at longer intervals (e.g. model,
 SN, etc at 1 hour), while for faster metrics we want the values to refresh much faster (e.g. 5 seconds).
 
-After reading all the ranges which were expired, the poller sleeps for `MODBUS_SLEEP` seconds. Hence increasing it will
-be nicer on the inverter, but your data will be more stale.
+After reading all the ranges which were expired, the poller sleeps for `MODBUS_SLEEP` seconds. Hence, increasing this will
+be nicer on the inverter, but your data will be more "stale".
 
 
 ## Future work
