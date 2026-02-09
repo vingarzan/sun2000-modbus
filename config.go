@@ -27,15 +27,17 @@ type config struct {
 	modbusPort    uint16
 	modbusTimeout uint
 	modbusSleep   uint
+	modbusSlaveID byte
 }
 
 func (c *config) setDefaults() {
-	c.httpIP = "127.0.0.1"
+	c.httpIP = "0.0.0.0"
 	c.httpPort = "8080"
 	c.modbusIP = ""
 	c.modbusPort = 502
 	c.modbusTimeout = 5
 	c.modbusSleep = 5
+	c.modbusSlaveID = 1
 }
 
 func (c *config) getFromEnv() {
@@ -81,4 +83,12 @@ func (c *config) getFromEnv() {
 		c.modbusSleep = uint(modbusSleepUint)
 	}
 
+	x = os.Getenv("MODBUS_SLAVE_ID")
+	if len(x) > 0 {
+		modbusSlaveIDUint, err := strconv.ParseUint(x, 10, 8)
+		if err != nil {
+			log.Fatal(err)
+		}
+		c.modbusSlaveID = byte(modbusSlaveIDUint)
+	}
 }

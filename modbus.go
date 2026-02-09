@@ -23,12 +23,12 @@ import (
 	"github.com/goburrow/modbus"
 )
 
-func initModbus(ip string, port uint16, timeout uint) (handler *modbus.TCPClientHandler, client modbus.Client, err error) {
+func initModbus(ip string, port uint16, timeout uint, slaveID byte) (handler *modbus.TCPClientHandler, client modbus.Client, err error) {
 	// Modbus TCP
 	modbus_target := fmt.Sprintf("%s:%d", ip, port)
 	handler = modbus.NewTCPClientHandler(modbus_target)
 	handler.Timeout = time.Duration(timeout) * time.Second
-	handler.SlaveId = 1
+	handler.SlaveId = slaveID
 	handler.Logger = lModBus
 	// Connect manually so that multiple requests are handled in one connection session
 	err = handler.Connect()
@@ -59,7 +59,7 @@ func handleReadModbusResults(results []byte, err error) (ok bool) {
 
 			lWarning.Printf("Too many errors, sleeping for 3 minute\n")
 			time.Sleep(3 * time.Minute)
-			handlerModbus, clientModbus, err = initModbus(cfg.modbusIP, cfg.modbusPort, uint(cfg.modbusTimeout))
+			handlerModbus, clientModbus, err = initModbus(cfg.modbusIP, cfg.modbusPort, uint(cfg.modbusTimeout), cfg.modbusSlaveID)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -71,7 +71,7 @@ func handleReadModbusResults(results []byte, err error) (ok bool) {
 			handlerModbus = nil
 			lInfo.Printf("Sleeping 30 seconds...")
 			time.Sleep(30 * time.Second)
-			handlerModbus, clientModbus, err = initModbus(cfg.modbusIP, cfg.modbusPort, uint(cfg.modbusTimeout))
+			handlerModbus, clientModbus, err = initModbus(cfg.modbusIP, cfg.modbusPort, uint(cfg.modbusTimeout), cfg.modbusSlaveID)
 			if err != nil {
 				log.Fatal(err)
 			}

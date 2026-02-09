@@ -60,7 +60,7 @@ func main() {
 	}()
 
 	// Init the modbus client
-	handlerModbus, clientModbus, err = initModbus(cfg.modbusIP, cfg.modbusPort, cfg.modbusTimeout)
+	handlerModbus, clientModbus, err = initModbus(cfg.modbusIP, cfg.modbusPort, cfg.modbusTimeout, cfg.modbusSlaveID)
 	if err != nil {
 		log.Fatal(err)
 	}
